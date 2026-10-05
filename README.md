@@ -64,6 +64,24 @@ API Back-end do projeto multidisciplinar da rede de lanchonetes Raízes do Norde
 3. Processar o pagamento (mock)
 4. Consultar o pedido com o status atualizado
 
+## Coleção Postman
+
+O arquivo `postman_collection.json` contém todos os cenários de teste da API:
+
+- Autenticação (registro, login, perfil)
+- Lojas (criar, listar)
+- Produtos (criar, listar)
+- Pedidos (criar, listar, buscar)
+- Pagamentos (aprovado, negado)
+- Erros (401, 404, 409, 422)
+
+### Como usar
+
+1. Abra o Postman
+2. Clique em **Import** e selecione `postman_collection.json`
+3. Crie um ambiente com a variável `base_url = http://127.0.0.1:8000`
+4. Rode as requisições na ordem (comece por **Login ADMIN**)
+
 ## Autor
 
 Tarlan Marcos Dalla Vecchia
