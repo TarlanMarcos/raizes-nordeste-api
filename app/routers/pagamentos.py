@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.database import SessionLocal
 from app import models, schemas
+from app.auth import get_usuario_atual
 
 router = APIRouter(prefix="/pagamentos", tags=["Pagamentos"])
 
@@ -19,10 +20,11 @@ def get_db():
 def processar_pagamento(
     pedido_id: int,
     pagamento: schemas.PagamentoRequest,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    usuario: models.Usuario = Depends(get_usuario_atual)
 ):
     """
-    Simula o pagamento de um pedido.
+    Simula o pagamento de um pedido. Requer autenticação.
 
     Regra do mock:
     - Se valor <= 100 → APROVADO
@@ -41,7 +43,6 @@ def processar_pagamento(
             detail=f"Pedido já está com status {pedido.status}."
         )
 
-    # Simulação do pagamento (mock)
     if pagamento.valor <= 100:
         pedido.pagamento_status = "APROVADO"
         pedido.status = "PAGO"

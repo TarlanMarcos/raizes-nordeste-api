@@ -4,6 +4,7 @@ from typing import List
 
 from app.database import SessionLocal
 from app import models, schemas
+from app.auth import get_usuario_atual
 
 router = APIRouter(prefix="/pedidos", tags=["Pedidos"])
 
@@ -16,9 +17,17 @@ def get_db():
         db.close()
 
 
-@router.post("/", response_model=schemas.PedidoResponse, status_code=status.HTTP_201_CREATED)
-def criar_pedido(pedido: schemas.PedidoCreate, db: Session = Depends(get_db)):
-    """Cria um novo pedido e registra o canal de origem."""
+@router.post(
+    "/",
+    response_model=schemas.PedidoResponse,
+    status_code=status.HTTP_201_CREATED
+)
+def criar_pedido(
+    pedido: schemas.PedidoCreate,
+    db: Session = Depends(get_db),
+    usuario: models.Usuario = Depends(get_usuario_atual)
+):
+    """Cria um novo pedido. Requer autenticação."""
     loja = db.query(models.Loja).filter(models.Loja.id == pedido.loja_id).first()
     if not loja:
         raise HTTPException(
@@ -46,8 +55,12 @@ def criar_pedido(pedido: schemas.PedidoCreate, db: Session = Depends(get_db)):
 
 
 @router.get("/", response_model=List[schemas.PedidoResponse])
-def listar_pedidos(canal_pedido: str = None, db: Session = Depends(get_db)):
-    """Lista pedidos, com filtro opcional por canal."""
+def listar_pedidos(
+    canal_pedido: str = None,
+    db: Session = Depends(get_db),
+    usuario: models.Usuario = Depends(get_usuario_atual)
+):
+    """Lista pedidos. Requer autenticação."""
     query = db.query(models.Pedido)
     if canal_pedido:
         query = query.filter(models.Pedido.canal_pedido == canal_pedido)
@@ -55,8 +68,12 @@ def listar_pedidos(canal_pedido: str = None, db: Session = Depends(get_db)):
 
 
 @router.get("/{pedido_id}", response_model=schemas.PedidoResponse)
-def buscar_pedido(pedido_id: int, db: Session = Depends(get_db)):
-    """Busca um pedido pelo ID."""
+def buscar_pedido(
+    pedido_id: int,
+    db: Session = Depends(get_db),
+    usuario: models.Usuario = Depends(get_usuario_atual)
+):
+    """Busca um pedido pelo ID. Requer autenticação."""
     pedido = db.query(models.Pedido).filter(models.Pedido.id == pedido_id).first()
     if not pedido:
         raise HTTPException(

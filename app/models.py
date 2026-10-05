@@ -39,3 +39,14 @@ class Pedido(Base):
     loja_id = Column(Integer, ForeignKey("lojas.id"))
 
     loja = relationship("Loja")
+
+class Usuario(Base):
+    __tablename__ = "usuarios"
+
+    id = Column(Integer, primary_key=True, index=True)
+    nome = Column(String, nullable=False)
+    email = Column(String, unique=True, index=True, nullable=False)
+    senha_hash = Column(String, nullable=False)
+    perfil = Column(String, default="CLIENTE")  # ADMIN, GERENTE, CLIENTE
+    consentimento_lgpd = Column(Boolean, default=False)
+    data_cadastro = Column(DateTime, default=datetime.now)

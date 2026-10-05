@@ -72,3 +72,34 @@ class PagamentoResponse(BaseModel):
     status_pagamento: str
     status_pedido: str
     mensagem: str
+
+# ---------- Autenticação ----------
+class UsuarioCreate(BaseModel):
+    nome: str
+    email: str
+    senha: str
+    perfil: str = "CLIENTE"
+    consentimento_lgpd: bool = False
+
+
+class UsuarioResponse(BaseModel):
+    id: int
+    nome: str
+    email: str
+    perfil: str
+    consentimento_lgpd: bool
+    data_cadastro: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class LoginRequest(BaseModel):
+    email: str
+    senha: str
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    perfil: str
